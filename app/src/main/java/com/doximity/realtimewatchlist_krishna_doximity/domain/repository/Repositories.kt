@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 interface MarketDataRepository {
-    val isDemoMode: Boolean
     val connectionState: StateFlow<ConnectionState>
     val priceUpdates: Flow<PriceUpdate>
 

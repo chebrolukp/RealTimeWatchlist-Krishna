@@ -19,7 +19,11 @@ navigation = "2.9.0"
 hiltNavigationCompose = "1.2.0"
 turbine = "1.2.0"
 
+jetbrainsMono = "1.0.0"
+googleFonts = "1.7.8"
+
 [libraries]
+google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "googleFonts" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

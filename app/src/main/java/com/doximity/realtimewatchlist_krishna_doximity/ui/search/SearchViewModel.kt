@@ -3,7 +3,6 @@ package com.doximity.realtimewatchlist_krishna_doximity.ui.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doximity.realtimewatchlist_krishna_doximity.domain.model.Instrument
-import com.doximity.realtimewatchlist_krishna_doximity.domain.repository.MarketDataRepository
 import com.doximity.realtimewatchlist_krishna_doximity.domain.usecase.SearchInstrumentsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -23,7 +22,6 @@ data class SearchResultUiModel(
 )
 
 data class SearchUiState(
-    val isDemoMode: Boolean = false,
     val query: String = "",
     val isSearching: Boolean = false,
     val results: List<SearchResultUiModel> = emptyList(),
@@ -33,11 +31,10 @@ data class SearchUiState(
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    marketDataRepository: MarketDataRepository,
     private val searchInstrumentsUseCase: SearchInstrumentsUseCase,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(SearchUiState(isDemoMode = marketDataRepository.isDemoMode))
+    private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
 
     private var searchJob: Job? = null

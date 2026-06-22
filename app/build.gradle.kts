@@ -17,7 +17,6 @@ val localProperties = Properties().apply {
 }
 
 val finnhubApiKey: String = localProperties.getProperty("FINNHUB_API_KEY", "").trim()
-val demoMode: Boolean = localProperties.getProperty("DEMO_MODE", "true").trim().toBoolean()
 
 android {
     namespace = "com.doximity.realtimewatchlist_krishna_doximity"
@@ -33,7 +32,6 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "FINNHUB_API_KEY", "\"$finnhubApiKey\"")
-        buildConfigField("boolean", "DEMO_MODE", demoMode.toString())
     }
 
     buildTypes {
@@ -65,6 +63,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.google.fonts)
 
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.retrofit.core)
