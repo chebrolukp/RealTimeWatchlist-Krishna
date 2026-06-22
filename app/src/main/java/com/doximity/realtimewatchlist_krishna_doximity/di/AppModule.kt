@@ -3,18 +3,22 @@ package com.doximity.realtimewatchlist_krishna_doximity.di
 import com.doximity.realtimewatchlist_krishna_doximity.BuildConfig
 import com.doximity.realtimewatchlist_krishna_doximity.data.remote.FinnhubApi
 import com.doximity.realtimewatchlist_krishna_doximity.data.repository.FinnhubMarketDataRepository
+import com.doximity.realtimewatchlist_krishna_doximity.data.repository.InMemoryWatchlistRepository
 import com.doximity.realtimewatchlist_krishna_doximity.domain.repository.MarketDataRepository
-import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.doximity.realtimewatchlist_krishna_doximity.domain.repository.WatchlistRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
@@ -25,13 +29,24 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindMarketDataRepository(
-        impl: FinnhubMarketDataRepository
+        impl: FinnhubMarketDataRepository,
     ): MarketDataRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindWatchlistRepository(
+        impl: InMemoryWatchlistRepository,
+    ): WatchlistRepository
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Provides
+    @Singleton
+    @Named("applicationScope")
+    fun provideApplicationScope(): CoroutineScope = CoroutineScope(SupervisorJob())
 
     @Provides
     @Singleton
@@ -77,6 +92,16 @@ object NetworkModule {
             .addInterceptor(logging)
             .build()
     }
+
+    @Provides
+    @Singleton
+    @Named("finnhubWebSocket")
+    fun provideWebSocketOkHttpClient(): OkHttpClient =
+        OkHttpClient.Builder()
+            .connectTimeout(20, TimeUnit.SECONDS)
+            .readTimeout(0, TimeUnit.SECONDS)
+            .pingInterval(20, TimeUnit.SECONDS)
+            .build()
 
     @Provides
     @Singleton

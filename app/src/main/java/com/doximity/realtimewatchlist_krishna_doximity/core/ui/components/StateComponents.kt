@@ -57,3 +57,21 @@ fun ErrorBanner(
         )
     }
 }
+
+@Composable
+fun ConnectionBanner(
+    label: String,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.surfaceVariant,
+    ) {
+        Text(
+            text = "Stream: $label",
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}

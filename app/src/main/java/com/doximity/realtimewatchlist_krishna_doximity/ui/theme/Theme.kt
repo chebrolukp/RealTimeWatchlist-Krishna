@@ -10,20 +10,28 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
+private val AppColorScheme = lightColorScheme(
+    primary = Primary,
+    onPrimary = OnPrimary,
+    tertiary = Tertiary,
+    error = Error,
+    onError = OnError,
+    errorContainer = ErrorContainer,
+    onErrorContainer = OnErrorContainer,
+    background = Background,
+    onBackground = OnBackground,
+    surface = Surface,
+    onSurface = OnSurface,
+    surfaceVariant = SurfaceVariant,
+    onSurfaceVariant = OnSurfaceVariant,
+    surfaceContainerLow = SurfaceContainerLow,
+    outline = Outline,
+)
+
 private val DarkColorScheme = darkColorScheme(
     primary = Primary,
     onPrimary = OnPrimary,
-    primaryContainer = PrimaryContainer,
-    onPrimaryContainer = OnPrimaryContainer,
-    inversePrimary = InversePrimary,
-    secondary = Secondary,
-    onSecondary = OnSecondary,
-    secondaryContainer = SecondaryContainer,
-    onSecondaryContainer = OnSecondaryContainer,
     tertiary = Tertiary,
-    onTertiary = OnTertiary,
-    tertiaryContainer = TertiaryContainer,
-    onTertiaryContainer = OnTertiaryContainer,
     error = Error,
     onError = OnError,
     errorContainer = ErrorContainer,
@@ -34,46 +42,8 @@ private val DarkColorScheme = darkColorScheme(
     onSurface = OnSurface,
     surfaceVariant = SurfaceVariant,
     onSurfaceVariant = OnSurfaceVariant,
-    surfaceContainerLowest = SurfaceContainerLowest,
     surfaceContainerLow = SurfaceContainerLow,
-    surfaceContainer = SurfaceContainer,
-    surfaceContainerHigh = SurfaceContainerHigh,
-    surfaceContainerHighest = SurfaceContainerHighest,
     outline = Outline,
-    outlineVariant = OutlineVariant,
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = Primary,
-    onPrimary = OnPrimary,
-    primaryContainer = PrimaryContainer,
-    onPrimaryContainer = OnPrimaryContainer,
-    inversePrimary = InversePrimary,
-    secondary = Secondary,
-    onSecondary = OnSecondary,
-    secondaryContainer = SecondaryContainer,
-    onSecondaryContainer = OnSecondaryContainer,
-    tertiary = Tertiary,
-    onTertiary = OnTertiary,
-    tertiaryContainer = TertiaryContainer,
-    onTertiaryContainer = OnTertiaryContainer,
-    error = Error,
-    onError = OnError,
-    errorContainer = ErrorContainer,
-    onErrorContainer = OnErrorContainer,
-    background = Background,
-    onBackground = OnBackground,
-    surface = Surface,
-    onSurface = OnSurface,
-    surfaceVariant = SurfaceVariant,
-    onSurfaceVariant = OnSurfaceVariant,
-    surfaceContainerLowest = SurfaceContainerLowest,
-    surfaceContainerLow = SurfaceContainerLow,
-    surfaceContainer = SurfaceContainer,
-    surfaceContainerHigh = SurfaceContainerHigh,
-    surfaceContainerHighest = SurfaceContainerHighest,
-    outline = Outline,
-    outlineVariant = OutlineVariant,
 )
 
 @Composable
@@ -90,7 +60,7 @@ fun RealtimeWatchListKrishnaDoximityTheme(
         }
 
         darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        else -> AppColorScheme
     }
 
     MaterialTheme(

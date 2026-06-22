@@ -3,6 +3,8 @@ package com.doximity.realtimewatchlist_krishna_doximity.ui.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doximity.realtimewatchlist_krishna_doximity.domain.model.Instrument
+import com.doximity.realtimewatchlist_krishna_doximity.domain.usecase.AddToWatchlistUseCase
+import com.doximity.realtimewatchlist_krishna_doximity.domain.usecase.IsInWatchlistUseCase
 import com.doximity.realtimewatchlist_krishna_doximity.domain.usecase.SearchInstrumentsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -32,6 +34,8 @@ data class SearchUiState(
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchInstrumentsUseCase: SearchInstrumentsUseCase,
+    private val addToWatchlistUseCase: AddToWatchlistUseCase,
+    private val isInWatchlistUseCase: IsInWatchlistUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
@@ -63,7 +67,7 @@ class SearchViewModel @Inject constructor(
                     val enriched = instruments.map { instrument ->
                         SearchResultUiModel(
                             instrument = instrument,
-                            isInWatchlist = false, // Set to false for now as per requirement
+                            isInWatchlist = isInWatchlistUseCase(instrument.symbol),
                         )
                     }
                     _uiState.update {
@@ -88,6 +92,19 @@ class SearchViewModel @Inject constructor(
     }
 
     fun addToWatchlist(instrument: Instrument) {
-        // Do nothing for now as per requirement
+        viewModelScope.launch {
+            addToWatchlistUseCase(instrument)
+            _uiState.update { state ->
+                state.copy(
+                    results = state.results.map { result ->
+                        if (result.instrument.symbol == instrument.symbol) {
+                            result.copy(isInWatchlist = true)
+                        } else {
+                            result
+                        }
+                    },
+                )
+            }
+        }
     }
 }
