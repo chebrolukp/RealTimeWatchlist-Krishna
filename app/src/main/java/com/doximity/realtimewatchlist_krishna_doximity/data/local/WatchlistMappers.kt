@@ -1,5 +1,6 @@
 package com.doximity.realtimewatchlist_krishna_doximity.data.local
 
+import com.doximity.realtimewatchlist_krishna_doximity.data.local.entity.WatchlistEntity
 import com.doximity.realtimewatchlist_krishna_doximity.domain.model.Instrument
 import com.doximity.realtimewatchlist_krishna_doximity.domain.model.WatchlistItem
 

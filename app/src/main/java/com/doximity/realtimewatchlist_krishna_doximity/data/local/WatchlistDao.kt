@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.doximity.realtimewatchlist_krishna_doximity.data.local.entity.WatchlistEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

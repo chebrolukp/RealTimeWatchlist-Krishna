@@ -2,6 +2,7 @@ package com.doximity.realtimewatchlist_krishna_doximity.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.doximity.realtimewatchlist_krishna_doximity.data.local.entity.WatchlistEntity
 
 @Database(
     entities = [WatchlistEntity::class],

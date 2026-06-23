@@ -1,4 +1,4 @@
-package com.doximity.realtimewatchlist_krishna_doximity.data.local
+package com.doximity.realtimewatchlist_krishna_doximity.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
