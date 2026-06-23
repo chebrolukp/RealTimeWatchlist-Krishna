@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+
 package com.doximity.realtimewatchlist_krishna_doximity.ui.search
 
 import android.content.Context

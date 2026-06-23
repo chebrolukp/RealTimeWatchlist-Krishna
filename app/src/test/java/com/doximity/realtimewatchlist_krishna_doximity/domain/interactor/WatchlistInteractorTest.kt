@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+
 package com.doximity.realtimewatchlist_krishna_doximity.domain.interactor
 
 import app.cash.turbine.test

@@ -55,7 +55,7 @@ fun HomeScreen() {
             restoreState = true
         }
     }
-
+    //for tablet
     if (useRail) {
         Row(modifier = Modifier.fillMaxSize()) {
             HomeNavigationRail(

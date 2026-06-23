@@ -241,7 +241,7 @@ private fun AddToWatchlistButton(
     } else {
         stringResource(R.string.add_to_watchlist, displaySymbol)
     }
-    val stateDescription = if (isInWatchlist) {
+    val addedStateLabel = if (isInWatchlist) {
         stringResource(R.string.state_added)
     } else {
         stringResource(R.string.state_not_added)
@@ -255,7 +255,7 @@ private fun AddToWatchlistButton(
             .size(48.dp)
             .semantics {
                 contentDescription = actionDescription
-                stateDescription = stateDescription
+                stateDescription = addedStateLabel
             },
         shape = RoundedCornerShape(8.dp),
         color = colorScheme.surfaceContainerLow,

@@ -245,31 +245,33 @@ private fun WatchlistItemCard(
                     val changeColor = if (change >= 0) Tertiary else Error
                     val formattedChange = formatChange(change)
                     val formattedPercent = formatPercentChange(entry.percentChange ?: 0.0)
+                    val changeDescription = stringResource(
+                        R.string.a11y_price_change,
+                        changePrefix,
+                        formattedChange,
+                        formattedPercent,
+                    )
                     Text(
                         text = "$formattedChange ($formattedPercent)",
                         style = MaterialTheme.typography.bodySmall,
                         color = changeColor,
                         modifier = Modifier.semantics {
-                            contentDescription = stringResource(
-                                R.string.a11y_price_change,
-                                changePrefix,
-                                formattedChange,
-                                formattedPercent,
-                            )
+                            contentDescription = changeDescription
                         },
                     )
                 }
             }
 
+            val removeDescription = stringResource(
+                R.string.remove_from_watchlist,
+                entry.item.displaySymbol,
+            )
             IconButton(
                 onClick = { onRemove(entry.item.symbol) },
                 modifier = Modifier
                     .minimumInteractiveComponentSize()
                     .semantics {
-                        contentDescription = stringResource(
-                            R.string.remove_from_watchlist,
-                            entry.item.displaySymbol,
-                        )
+                        contentDescription = removeDescription
                     },
             ) {
                 Icon(

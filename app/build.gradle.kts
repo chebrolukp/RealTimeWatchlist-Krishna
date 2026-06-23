@@ -50,6 +50,11 @@ android {
     testOptions {
         unitTests.isIncludeAndroidResources = true
     }
+    kotlin {
+        compilerOptions {
+            freeCompilerArgs.add("-Xannotation-default-target=param-property")
+        }
+    }
 }
 
 dependencies {
