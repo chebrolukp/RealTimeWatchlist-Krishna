@@ -1,18 +1,17 @@
 package com.doximity.realtimewatchlist_krishna_doximity.ui.watchlist
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doximity.realtimewatchlist_krishna_doximity.core.domain.model.ConnectionState
 import com.doximity.realtimewatchlist_krishna_doximity.core.domain.model.PriceStatus
-import com.doximity.realtimewatchlist_krishna_doximity.core.ui.util.toUserMessage
+import com.doximity.realtimewatchlist_krishna_doximity.core.ui.model.UiText
+import com.doximity.realtimewatchlist_krishna_doximity.core.ui.util.toUiText
 import com.doximity.realtimewatchlist_krishna_doximity.domain.model.WatchlistItem
 import com.doximity.realtimewatchlist_krishna_doximity.domain.model.WatchlistOverview
 import com.doximity.realtimewatchlist_krishna_doximity.domain.usecase.ObserveWatchlistWithPricesUseCase
 import com.doximity.realtimewatchlist_krishna_doximity.domain.usecase.RefreshWatchlistUseCase
 import com.doximity.realtimewatchlist_krishna_doximity.domain.usecase.RemoveFromWatchlistUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -36,12 +35,11 @@ data class WatchlistScreenState(
     val isRefreshing: Boolean = false,
     val entries: List<WatchlistEntryUiModel> = emptyList(),
     val connectionState: ConnectionState = ConnectionState.Disconnected,
-    val errorMessage: String? = null,
+    val errorMessage: UiText? = null,
 )
 
 @HiltViewModel
 class WatchlistViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
     observeWatchlistWithPricesUseCase: ObserveWatchlistWithPricesUseCase,
     private val refreshWatchlistUseCase: RefreshWatchlistUseCase,
     private val removeFromWatchlistUseCase: RemoveFromWatchlistUseCase,
@@ -88,7 +86,7 @@ class WatchlistViewModel @Inject constructor(
                 )
             },
             connectionState = connectionState,
-            errorMessage = error?.toUserMessage(context),
+            errorMessage = error?.toUiText(),
         )
     }
 }

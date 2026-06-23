@@ -4,6 +4,7 @@ package com.doximity.realtimewatchlist_krishna_doximity.ui.search
 
 import com.doximity.realtimewatchlist_krishna_doximity.MainDispatcherRule
 import com.doximity.realtimewatchlist_krishna_doximity.core.domain.model.ConnectionState
+import com.doximity.realtimewatchlist_krishna_doximity.core.ui.model.UiText
 import com.doximity.realtimewatchlist_krishna_doximity.domain.model.Instrument
 import com.doximity.realtimewatchlist_krishna_doximity.domain.model.PriceUpdate
 import com.doximity.realtimewatchlist_krishna_doximity.domain.model.Quote
@@ -11,8 +12,9 @@ import com.doximity.realtimewatchlist_krishna_doximity.domain.model.WatchlistIte
 import com.doximity.realtimewatchlist_krishna_doximity.domain.repository.MarketDataRepository
 import com.doximity.realtimewatchlist_krishna_doximity.domain.repository.WatchlistRepository
 import com.doximity.realtimewatchlist_krishna_doximity.domain.usecase.AddToWatchlistUseCase
-import com.doximity.realtimewatchlist_krishna_doximity.domain.usecase.IsInWatchlistUseCase
+import com.doximity.realtimewatchlist_krishna_doximity.domain.usecase.ObserveWatchlistSymbolsUseCase
 import com.doximity.realtimewatchlist_krishna_doximity.domain.usecase.SearchInstrumentsUseCase
+import com.doximity.realtimewatchlist_krishna_doximity.domain.usecase.SearchInstrumentsWithWatchlistUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,12 +32,9 @@ class SearchViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val toErrorMessage: (Throwable) -> String =
-        { error -> error.message ?: "Search failed" }
-
     @Test
     fun successfulSearch_populatesResults() = runTest(mainDispatcherRule.dispatcher) {
-        val repository = FakeMarketDataRepositoryForTest(
+        val marketRepository = FakeMarketDataRepositoryForTest(
             searchResult = Result.success(
                 listOf(
                     Instrument("AAPL", "AAPL", "Apple Inc.", "Common Stock"),
@@ -43,12 +42,7 @@ class SearchViewModelTest {
             ),
         )
         val watchlistRepository = FakeWatchlistRepositoryForTest()
-        val viewModel = SearchViewModel(
-            toErrorMessage,
-            SearchInstrumentsUseCase(repository),
-            AddToWatchlistUseCase(watchlistRepository),
-            IsInWatchlistUseCase(watchlistRepository),
-        )
+        val viewModel = createViewModel(marketRepository, watchlistRepository)
 
         viewModel.onQueryChange("AAPL")
         mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(300)
@@ -62,38 +56,31 @@ class SearchViewModelTest {
 
     @Test
     fun failedSearch_setsErrorMessage() = runTest(mainDispatcherRule.dispatcher) {
-        val repository = FakeMarketDataRepositoryForTest(
+        val marketRepository = FakeMarketDataRepositoryForTest(
             searchResult = Result.failure(IllegalStateException("Rate limited")),
         )
         val watchlistRepository = FakeWatchlistRepositoryForTest()
-        val viewModel = SearchViewModel(
-            toErrorMessage,
-            SearchInstrumentsUseCase(repository),
-            AddToWatchlistUseCase(watchlistRepository),
-            IsInWatchlistUseCase(watchlistRepository),
-        )
+        val viewModel = createViewModel(marketRepository, watchlistRepository)
 
         viewModel.onQueryChange("AAPL")
         mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(300)
         advanceUntilIdle()
 
-        assertEquals("Rate limited", viewModel.uiState.value.errorMessage)
+        assertEquals(
+            UiText.Dynamic("Rate limited"),
+            viewModel.uiState.value.errorMessage,
+        )
         assertTrue(viewModel.uiState.value.results.isEmpty())
     }
 
     @Test
     fun addToWatchlist_marksResultAsAdded() = runTest(mainDispatcherRule.dispatcher) {
         val instrument = Instrument("AAPL", "AAPL", "Apple Inc.", "Common Stock")
-        val repository = FakeMarketDataRepositoryForTest(
+        val marketRepository = FakeMarketDataRepositoryForTest(
             searchResult = Result.success(listOf(instrument)),
         )
         val watchlistRepository = FakeWatchlistRepositoryForTest()
-        val viewModel = SearchViewModel(
-            toErrorMessage,
-            SearchInstrumentsUseCase(repository),
-            AddToWatchlistUseCase(watchlistRepository),
-            IsInWatchlistUseCase(watchlistRepository),
-        )
+        val viewModel = createViewModel(marketRepository, watchlistRepository)
 
         viewModel.onQueryChange("AAPL")
         mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(300)
@@ -102,7 +89,19 @@ class SearchViewModelTest {
         advanceUntilIdle()
 
         assertTrue(viewModel.uiState.value.results.first().isInWatchlist)
-        assertTrue(watchlistRepository.items.contains("AAPL"))
+        assertTrue(watchlistRepository.contains("AAPL"))
+    }
+
+    private fun createViewModel(
+        marketRepository: MarketDataRepository,
+        watchlistRepository: WatchlistRepository,
+    ): SearchViewModel {
+        val searchUseCase = SearchInstrumentsUseCase(marketRepository)
+        return SearchViewModel(
+            searchInstrumentsWithWatchlistUseCase = SearchInstrumentsWithWatchlistUseCase(searchUseCase),
+            observeWatchlistSymbolsUseCase = ObserveWatchlistSymbolsUseCase(watchlistRepository),
+            addToWatchlistUseCase = AddToWatchlistUseCase(watchlistRepository),
+        )
     }
 
     private class FakeMarketDataRepositoryForTest(
@@ -129,18 +128,29 @@ class SearchViewModelTest {
     }
 
     private class FakeWatchlistRepositoryForTest : WatchlistRepository {
-        val items = mutableSetOf<String>()
+        private val items = MutableStateFlow<List<WatchlistItem>>(emptyList())
 
-        override fun observeWatchlist(): Flow<List<WatchlistItem>> = emptyFlow()
+        fun contains(symbol: String): Boolean =
+            items.value.any { it.symbol == symbol }
+
+        override fun observeWatchlist(): Flow<List<WatchlistItem>> = items
 
         override suspend fun addInstrument(instrument: Instrument) {
-            items += instrument.symbol
+            if (items.value.any { it.symbol == instrument.symbol }) return
+            items.value = items.value + WatchlistItem(
+                symbol = instrument.symbol,
+                displaySymbol = instrument.displaySymbol,
+                description = instrument.description,
+                type = instrument.type,
+                addedAtEpochMs = 0L,
+            )
         }
 
         override suspend fun removeInstrument(symbol: String) {
-            items -= symbol
+            items.value = items.value.filterNot { it.symbol == symbol }
         }
 
-        override suspend fun isInWatchlist(symbol: String): Boolean = items.contains(symbol)
+        override suspend fun isInWatchlist(symbol: String): Boolean =
+            items.value.any { it.symbol == symbol }
     }
 }

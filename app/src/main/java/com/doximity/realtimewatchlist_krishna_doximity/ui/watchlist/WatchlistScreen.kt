@@ -47,6 +47,7 @@ import com.doximity.realtimewatchlist_krishna_doximity.core.ui.components.Connec
 import com.doximity.realtimewatchlist_krishna_doximity.core.ui.components.EmptyState
 import com.doximity.realtimewatchlist_krishna_doximity.core.ui.components.ErrorBanner
 import com.doximity.realtimewatchlist_krishna_doximity.core.ui.components.LoadingIndicator
+import com.doximity.realtimewatchlist_krishna_doximity.core.ui.model.asString
 import com.doximity.realtimewatchlist_krishna_doximity.core.ui.util.buildWatchlistStatusText
 import com.doximity.realtimewatchlist_krishna_doximity.core.ui.util.connectionStateLabel
 import com.doximity.realtimewatchlist_krishna_doximity.core.ui.util.formatChange
@@ -102,7 +103,7 @@ fun WatchlistContent(
 
             uiState.errorMessage?.let { message ->
                 ErrorBanner(
-                    message = message,
+                    message = message.asString(),
                     modifier = Modifier.padding(horizontal = contentPadding),
                 )
             }

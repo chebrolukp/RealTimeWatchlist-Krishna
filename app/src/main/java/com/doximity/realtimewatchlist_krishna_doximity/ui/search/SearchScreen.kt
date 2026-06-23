@@ -45,7 +45,9 @@ import com.doximity.realtimewatchlist_krishna_doximity.core.ui.adaptive.adaptive
 import com.doximity.realtimewatchlist_krishna_doximity.core.ui.components.EmptyState
 import com.doximity.realtimewatchlist_krishna_doximity.core.ui.components.ErrorBanner
 import com.doximity.realtimewatchlist_krishna_doximity.core.ui.components.LoadingIndicator
+import com.doximity.realtimewatchlist_krishna_doximity.core.ui.model.asString
 import com.doximity.realtimewatchlist_krishna_doximity.domain.model.Instrument
+import com.doximity.realtimewatchlist_krishna_doximity.domain.model.SearchResult
 import com.doximity.realtimewatchlist_krishna_doximity.ui.theme.CardBackground
 import com.doximity.realtimewatchlist_krishna_doximity.ui.theme.ListItemBackground
 import com.doximity.realtimewatchlist_krishna_doximity.ui.theme.PageBackground
@@ -99,7 +101,7 @@ fun SearchContent(
 
             uiState.errorMessage?.let { message ->
                 ErrorBanner(
-                    message = message,
+                    message = message.asString(),
                     modifier = Modifier.padding(horizontal = contentPadding),
                 )
             }
@@ -177,7 +179,7 @@ fun SearchContent(
 
 @Composable
 private fun SearchResultCard(
-    result: SearchResultUiModel,
+    result: SearchResult,
     onAdd: (Instrument) -> Unit,
 ) {
     val instrument = result.instrument

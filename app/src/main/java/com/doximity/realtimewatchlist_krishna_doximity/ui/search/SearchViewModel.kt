@@ -1,15 +1,15 @@
 package com.doximity.realtimewatchlist_krishna_doximity.ui.search
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.doximity.realtimewatchlist_krishna_doximity.core.ui.util.toUserMessage
+import com.doximity.realtimewatchlist_krishna_doximity.core.ui.model.UiText
+import com.doximity.realtimewatchlist_krishna_doximity.core.ui.util.toUiText
 import com.doximity.realtimewatchlist_krishna_doximity.domain.model.Instrument
+import com.doximity.realtimewatchlist_krishna_doximity.domain.model.SearchResult
 import com.doximity.realtimewatchlist_krishna_doximity.domain.usecase.AddToWatchlistUseCase
-import com.doximity.realtimewatchlist_krishna_doximity.domain.usecase.IsInWatchlistUseCase
-import com.doximity.realtimewatchlist_krishna_doximity.domain.usecase.SearchInstrumentsUseCase
+import com.doximity.realtimewatchlist_krishna_doximity.domain.usecase.ObserveWatchlistSymbolsUseCase
+import com.doximity.realtimewatchlist_krishna_doximity.domain.usecase.SearchInstrumentsWithWatchlistUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,43 +22,41 @@ import kotlin.time.Duration.Companion.milliseconds
 
 private const val SEARCH_DEBOUNCE_MS = 300L
 
-data class SearchResultUiModel(
-    val instrument: Instrument,
-    val isInWatchlist: Boolean,
-)
-
 data class SearchUiState(
     val query: String = "",
     val isSearching: Boolean = false,
-    val results: List<SearchResultUiModel> = emptyList(),
-    val errorMessage: String? = null,
+    val results: List<SearchResult> = emptyList(),
+    val errorMessage: UiText? = null,
     val hasSearched: Boolean = false,
 )
 
 @HiltViewModel
-class SearchViewModel(
-    private val toErrorMessage: (Throwable) -> String,
-    private val searchInstrumentsUseCase: SearchInstrumentsUseCase,
+class SearchViewModel @Inject constructor(
+    private val searchInstrumentsWithWatchlistUseCase: SearchInstrumentsWithWatchlistUseCase,
+    private val observeWatchlistSymbolsUseCase: ObserveWatchlistSymbolsUseCase,
     private val addToWatchlistUseCase: AddToWatchlistUseCase,
-    private val isInWatchlistUseCase: IsInWatchlistUseCase,
 ) : ViewModel() {
-
-    @Inject constructor(
-        @ApplicationContext context: Context,
-        searchInstrumentsUseCase: SearchInstrumentsUseCase,
-        addToWatchlistUseCase: AddToWatchlistUseCase,
-        isInWatchlistUseCase: IsInWatchlistUseCase,
-    ) : this(
-        toErrorMessage = { it.toUserMessage(context) },
-        searchInstrumentsUseCase = searchInstrumentsUseCase,
-        addToWatchlistUseCase = addToWatchlistUseCase,
-        isInWatchlistUseCase = isInWatchlistUseCase,
-    )
 
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
 
     private var searchJob: Job? = null
+    private var watchlistSymbols = emptySet<String>()
+
+    init {
+        viewModelScope.launch {
+            observeWatchlistSymbolsUseCase().collect { symbols ->
+                watchlistSymbols = symbols
+                _uiState.update { state ->
+                    state.copy(
+                        results = state.results.map { result ->
+                            result.copy(isInWatchlist = symbols.contains(result.instrument.symbol))
+                        },
+                    )
+                }
+            }
+        }
+    }
 
     fun onQueryChange(query: String) {
         _uiState.update { it.copy(query = query, errorMessage = null) }
@@ -78,19 +76,13 @@ class SearchViewModel(
         searchJob = viewModelScope.launch {
             delay(SEARCH_DEBOUNCE_MS.milliseconds)
             _uiState.update { it.copy(isSearching = true, hasSearched = true) }
-            val result = searchInstrumentsUseCase(query.trim())
+            val result = searchInstrumentsWithWatchlistUseCase(query.trim(), watchlistSymbols)
             result.fold(
-                onSuccess = { instruments ->
-                    val enriched = instruments.map { instrument ->
-                        SearchResultUiModel(
-                            instrument = instrument,
-                            isInWatchlist = isInWatchlistUseCase(instrument.symbol),
-                        )
-                    }
+                onSuccess = { results ->
                     _uiState.update {
                         it.copy(
                             isSearching = false,
-                            results = enriched,
+                            results = results,
                             errorMessage = null,
                         )
                     }
@@ -100,7 +92,7 @@ class SearchViewModel(
                         it.copy(
                             isSearching = false,
                             results = emptyList(),
-                            errorMessage = toErrorMessage(error),
+                            errorMessage = error.toUiText(),
                         )
                     }
                 },
@@ -111,17 +103,6 @@ class SearchViewModel(
     fun addToWatchlist(instrument: Instrument) {
         viewModelScope.launch {
             addToWatchlistUseCase(instrument)
-            _uiState.update { state ->
-                state.copy(
-                    results = state.results.map { result ->
-                        if (result.instrument.symbol == instrument.symbol) {
-                            result.copy(isInWatchlist = true)
-                        } else {
-                            result
-                        }
-                    },
-                )
-            }
         }
     }
 }

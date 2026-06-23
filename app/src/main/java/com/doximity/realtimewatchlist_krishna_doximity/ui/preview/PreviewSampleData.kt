@@ -2,9 +2,10 @@ package com.doximity.realtimewatchlist_krishna_doximity.ui.preview
 
 import com.doximity.realtimewatchlist_krishna_doximity.core.domain.model.ConnectionState
 import com.doximity.realtimewatchlist_krishna_doximity.core.domain.model.PriceStatus
+import com.doximity.realtimewatchlist_krishna_doximity.core.ui.model.UiText
 import com.doximity.realtimewatchlist_krishna_doximity.domain.model.Instrument
+import com.doximity.realtimewatchlist_krishna_doximity.domain.model.SearchResult
 import com.doximity.realtimewatchlist_krishna_doximity.domain.model.WatchlistItem
-import com.doximity.realtimewatchlist_krishna_doximity.ui.search.SearchResultUiModel
 import com.doximity.realtimewatchlist_krishna_doximity.ui.search.SearchUiState
 import com.doximity.realtimewatchlist_krishna_doximity.ui.watchlist.WatchlistEntryUiModel
 import com.doximity.realtimewatchlist_krishna_doximity.ui.watchlist.WatchlistScreenState
@@ -27,9 +28,9 @@ object PreviewSampleData {
     val searchResults = SearchUiState(
         query = "A",
         results = listOf(
-            SearchResultUiModel(apple, isInWatchlist = true),
-            SearchResultUiModel(microsoft, isInWatchlist = false),
-            SearchResultUiModel(bitcoin, isInWatchlist = false),
+            SearchResult(apple, isInWatchlist = true),
+            SearchResult(microsoft, isInWatchlist = false),
+            SearchResult(bitcoin, isInWatchlist = false),
         ),
         hasSearched = true,
     )
@@ -42,7 +43,7 @@ object PreviewSampleData {
 
     val searchError = SearchUiState(
         query = "AAPL",
-        errorMessage = "Rate limit exceeded. Try again shortly.",
+        errorMessage = UiText.Dynamic("Rate limit exceeded. Try again shortly."),
         hasSearched = true,
     )
 
