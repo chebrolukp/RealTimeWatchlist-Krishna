@@ -1,0 +1,12 @@
+# Copy relevant lines into local.properties (that file is gitignored).
+# Android Studio usually creates local.properties with sdk.dir automatically.
+
+sdk.dir=/path/to/Android/Sdk
+
+# Finnhub REST + WebSocket. Leave blank to run in demo mode automatically.
+FINNHUB_API_KEY=
+
+# Optional — override demo mode (omit for defaults)
+# Default: demo mode ON when FINNHUB_API_KEY is blank; OFF when key is set
+# DEMO_MODE=true    # force sample data even if you have a key
+# DEMO_MODE=false   # force live Finnhub even if key is blank (not recommended)

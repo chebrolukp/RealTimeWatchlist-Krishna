@@ -1,8 +1,5 @@
 # Real-Time Watchlist
 
-A small Android app that lets a user search for financial instruments, manage a persistent watchlist, and see live price updates. Built for the Doximity take-home exercise with a focus on clear architecture, observable UI state, and a documented demo mode so reviewers can run the core experience without external API dependencies.
-
----
 
 ## Build and run instructions
 
@@ -12,30 +9,11 @@ A small Android app that lets a user search for financial instruments, manage a 
 - **JDK 11+** (project uses Android Studio’s bundled JBR via `gradle.properties`)
 - **Android device or emulator** — API 24+ (Android 7.0)
 - **Finnhub API key** (optional — see [Demo / fake-data mode](#demo--fake-data-mode) below)
-
-### Setup
-
-1. Clone or extract the project and open it in Android Studio.
-2. Create or edit `local.properties` in the project root (gitignored):
-
-```properties
-# Required for live Finnhub data (optional if using demo mode)
-FINNHUB_API_KEY=your_finnhub_token
-
-# Optional — see demo mode section
-# DEMO_MODE=true
-```
-Get a free key at [finnhub.io](https://finnhub.io/).
-
-3. **Sync Gradle** and wait for dependencies to resolve.
-4. Select the **`app`** run configuration.
-5. Run on an emulator or physical device.
+  (Get a free key at [finnhub.io](https://finnhub.io/).)
 
 ### Command line
 
 ```bash
-# Debug APK
-./gradlew :app:assembleDebug
 
 # Unit tests
 ./gradlew :app:testDebugUnitTest
@@ -43,8 +21,6 @@ Get a free key at [finnhub.io](https://finnhub.io/).
 # UI / instrumented tests (requires connected device or emulator)
 ./gradlew :app:connectedDebugAndroidTest
 ```
-
-On Windows, use `gradlew.bat` instead of `./gradlew`.
 
 ### Gradle notes
 
