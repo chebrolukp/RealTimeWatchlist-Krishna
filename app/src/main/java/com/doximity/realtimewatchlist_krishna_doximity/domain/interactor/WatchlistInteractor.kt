@@ -70,6 +70,16 @@ class WatchlistInteractor @Inject constructor(
         }
     }
 
+    suspend fun refresh() {
+        val items = _overview.value.entries.map { it.item }
+        refreshQuotes(items)
+        if (items.isNotEmpty()) {
+            val symbols = items.map { it.symbol }.toSet()
+            marketDataRepository.updateLiveSubscriptions(symbols)
+            restartPriceUpdates()
+        }
+    }
+
     private suspend fun refreshQuotes(items: List<WatchlistItem>) {
         if (items.isEmpty()) {
             quoteSnapshots.value = emptyMap()
@@ -83,13 +93,13 @@ class WatchlistInteractor @Inject constructor(
                 onSuccess = { quote ->
                     QuoteSnapshot(
                         quote = quote,
-                        errorMessage = null,
+                        error = null,
                     )
                 },
                 onFailure = { error ->
                     QuoteSnapshot(
                         quote = null,
-                        errorMessage = error.message,
+                        error = error,
                     )
                 },
             )
@@ -149,7 +159,7 @@ class WatchlistInteractor @Inject constructor(
         connection: ConnectionState,
     ): WatchlistOverview {
         val now = System.currentTimeMillis()
-        val firstError = snapshots.values.firstOrNull { it.errorMessage != null }?.errorMessage
+        val firstError = snapshots.values.firstNotNullOfOrNull { it.error }
 
         val entries = items.map { item ->
             val snapshot = snapshots[item.symbol]
@@ -162,7 +172,7 @@ class WatchlistInteractor @Inject constructor(
             val lastUpdatedMs = livePrice?.timestampMs ?: quote?.timestampSeconds?.times(1_000)
 
             val status = when {
-                snapshot?.errorMessage != null && price == null -> PriceStatus.Unavailable
+                snapshot?.error != null && price == null -> PriceStatus.Unavailable
                 price == null || price <= 0.0 -> PriceStatus.Unavailable
                 livePrice == null && quote?.hasPrice == true -> PriceStatus.Stale
                 lastUpdatedMs != null && now - lastUpdatedMs > STALE_THRESHOLD_MS -> PriceStatus.Stale
@@ -184,13 +194,13 @@ class WatchlistInteractor @Inject constructor(
         return WatchlistOverview(
             entries = entries,
             connectionState = if (items.isEmpty()) ConnectionState.Disconnected else connection,
-            errorMessage = firstError,
+            error = firstError,
         )
     }
 
     private data class QuoteSnapshot(
         val quote: Quote?,
-        val errorMessage: String?,
+        val error: Throwable?,
     )
 
     private data class LivePrice(

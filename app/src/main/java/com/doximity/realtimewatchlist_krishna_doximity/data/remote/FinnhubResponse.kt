@@ -6,14 +6,17 @@ internal fun <T> Response<T>.requireFinnhubBody(): T {
     if (isSuccessful) {
         val body = body()
         if (body != null) return body
-        throw FinnhubApiException("Finnhub returned an empty response.")
+        throw FinnhubApiException(isEmptyBody = true)
     }
     throw when (code()) {
         401 -> FinnhubUnauthorizedException()
         403 -> FinnhubForbiddenException()
         429 -> FinnhubRateLimitException()
-        else -> FinnhubApiException("Finnhub request failed (HTTP ${code()}).")
+        else -> FinnhubApiException(httpCode = code())
     }
 }
 
-class FinnhubApiException(message: String) : Exception(message)
+class FinnhubApiException(
+    val httpCode: Int? = null,
+    val isEmptyBody: Boolean = false,
+) : Exception()

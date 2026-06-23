@@ -12,6 +12,7 @@ private fun WatchlistScreenEmptyPreview() {
         WatchlistContent(
             uiState = PreviewSampleData.watchlistEmpty,
             onRemove = {},
+            onRefresh = {},
         )
     }
 }
@@ -23,6 +24,7 @@ private fun WatchlistScreenLoadingPreview() {
         WatchlistContent(
             uiState = PreviewSampleData.watchlistLoading,
             onRemove = {},
+            onRefresh = {},
         )
     }
 }
@@ -34,6 +36,7 @@ private fun WatchlistScreenWithEntriesPreview() {
         WatchlistContent(
             uiState = PreviewSampleData.watchlistWithEntries,
             onRemove = {},
+            onRefresh = {},
         )
     }
 }
@@ -45,6 +48,7 @@ private fun WatchlistScreenReconnectingPreview() {
         WatchlistContent(
             uiState = PreviewSampleData.watchlistReconnecting,
             onRemove = {},
+            onRefresh = {},
         )
     }
 }

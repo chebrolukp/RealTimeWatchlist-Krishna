@@ -6,7 +6,7 @@ import com.doximity.realtimewatchlist_krishna_doximity.core.domain.model.PriceSt
 data class WatchlistOverview(
     val entries: List<WatchlistEntry>,
     val connectionState: ConnectionState,
-    val errorMessage: String? = null,
+    val error: Throwable? = null,
 )
 
 data class WatchlistEntry(

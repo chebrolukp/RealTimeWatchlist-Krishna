@@ -20,6 +20,7 @@ private fun HomeScreenWatchlistTabPreview() {
             WatchlistContent(
                 uiState = PreviewSampleData.watchlistWithEntries,
                 onRemove = {},
+                onRefresh = {},
                 modifier = padding,
             )
         }

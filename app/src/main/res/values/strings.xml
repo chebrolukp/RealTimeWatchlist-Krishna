@@ -1,3 +1,65 @@
 <resources>
     <string name="app_name">RealtimeWatchList-Krishna-Doximity</string>
+
+    <!-- Navigation -->
+    <string name="nav_watchlist">Watchlist</string>
+    <string name="nav_search">Search</string>
+
+    <!-- Search -->
+    <string name="search_label">Search instruments</string>
+    <string name="search_placeholder">AAPL, BTC, EUR/USD…</string>
+    <string name="search_hint">Search by ticker or company name. Results come from Finnhub.</string>
+    <string name="search_loading">Searching instruments</string>
+    <string name="search_empty_title">Find an instrument</string>
+    <string name="search_no_results_title">No results</string>
+    <string name="search_no_results_message">Try another symbol or company name.</string>
+    <string name="search_failed">Search failed</string>
+    <string name="add_to_watchlist">Add %1$s to watchlist</string>
+    <string name="already_in_watchlist">%1$s already in watchlist</string>
+    <string name="already_in_watchlist_suffix">Already in watchlist.</string>
+    <string name="state_added">Added</string>
+    <string name="state_not_added">Not added</string>
+
+    <!-- Watchlist -->
+    <string name="watchlist_loading">Loading watchlist</string>
+    <string name="watchlist_empty_title">Watchlist is empty</string>
+    <string name="watchlist_empty_message">Search for stocks, crypto, or forex and add symbols to track live prices.</string>
+    <string name="remove_from_watchlist">Remove %1$s from watchlist</string>
+    <string name="price_up">Up</string>
+    <string name="price_down">Down</string>
+    <string name="reconnecting_with_status">Reconnecting — %1$s</string>
+    <string name="price_may_be_stale">Price may be stale</string>
+
+    <!-- Connection state -->
+    <string name="connection_disconnected">Disconnected</string>
+    <string name="connection_connecting">Connecting…</string>
+    <string name="connection_live">Live</string>
+    <string name="connection_reconnecting">Reconnecting…</string>
+
+    <!-- Price status -->
+    <string name="price_status_live">Live</string>
+    <string name="price_status_stale">Stale</string>
+    <string name="price_status_unavailable">Unavailable</string>
+
+    <!-- Banners & loading -->
+    <string name="error_banner">Error: %1$s</string>
+    <string name="stream_status">Stream: %1$s</string>
+    <string name="stream_status_description">Price stream status: %1$s</string>
+
+    <!-- Accessibility -->
+    <string name="a11y_price_unavailable">price unavailable</string>
+    <string name="a11y_change_unavailable">change unavailable</string>
+    <string name="a11y_stream_reconnecting">Stream reconnecting. Price status %1$s.</string>
+    <string name="a11y_price_may_be_stale">Price may be stale.</string>
+    <string name="a11y_price_status">Price status %1$s.</string>
+    <string name="a11y_watchlist_entry">%1$s, %2$s. %3$s. %4$s. %5$s</string>
+    <string name="a11y_price_change">%1$s %2$s, %3$s</string>
+
+    <!-- API errors -->
+    <string name="error_generic">Something went wrong. Please try again.</string>
+    <string name="error_finnhub_empty_response">Finnhub returned an empty response.</string>
+    <string name="error_finnhub_request_failed">Finnhub request failed (HTTP %1$d).</string>
+    <string name="error_finnhub_rate_limit">Finnhub rate limit exceeded (HTTP 429). Try again shortly.</string>
+    <string name="error_finnhub_unauthorized">Invalid Finnhub API key. Verify FINNHUB_API_KEY in local.properties, then rebuild.</string>
+    <string name="error_finnhub_forbidden">Quote not available for this symbol on your Finnhub plan.</string>
 </resources>

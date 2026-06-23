@@ -1,12 +1,15 @@
 package com.doximity.realtimewatchlist_krishna_doximity.ui.search
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.doximity.realtimewatchlist_krishna_doximity.core.ui.util.toUserMessage
 import com.doximity.realtimewatchlist_krishna_doximity.domain.model.Instrument
 import com.doximity.realtimewatchlist_krishna_doximity.domain.usecase.AddToWatchlistUseCase
 import com.doximity.realtimewatchlist_krishna_doximity.domain.usecase.IsInWatchlistUseCase
 import com.doximity.realtimewatchlist_krishna_doximity.domain.usecase.SearchInstrumentsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,6 +36,7 @@ data class SearchUiState(
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val searchInstrumentsUseCase: SearchInstrumentsUseCase,
     private val addToWatchlistUseCase: AddToWatchlistUseCase,
     private val isInWatchlistUseCase: IsInWatchlistUseCase,
@@ -83,7 +87,7 @@ class SearchViewModel @Inject constructor(
                         it.copy(
                             isSearching = false,
                             results = emptyList(),
-                            errorMessage = error.message ?: "Search failed",
+                            errorMessage = error.toUserMessage(context),
                         )
                     }
                 },

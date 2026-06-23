@@ -1,5 +1,7 @@
 package com.doximity.realtimewatchlist_krishna_doximity.ui.search
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import com.doximity.realtimewatchlist_krishna_doximity.MainDispatcherRule
 import com.doximity.realtimewatchlist_krishna_doximity.core.domain.model.ConnectionState
 import com.doximity.realtimewatchlist_krishna_doximity.domain.model.Instrument
@@ -28,6 +30,8 @@ class SearchViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
+    private val context: Context = ApplicationProvider.getApplicationContext()
+
     @Test
     fun successfulSearch_populatesResults() = runTest {
         val repository = FakeMarketDataRepositoryForTest(
@@ -39,6 +43,7 @@ class SearchViewModelTest {
         )
         val watchlistRepository = FakeWatchlistRepositoryForTest()
         val viewModel = SearchViewModel(
+            context,
             SearchInstrumentsUseCase(repository),
             AddToWatchlistUseCase(watchlistRepository),
             IsInWatchlistUseCase(watchlistRepository),
@@ -60,6 +65,7 @@ class SearchViewModelTest {
         )
         val watchlistRepository = FakeWatchlistRepositoryForTest()
         val viewModel = SearchViewModel(
+            context,
             SearchInstrumentsUseCase(repository),
             AddToWatchlistUseCase(watchlistRepository),
             IsInWatchlistUseCase(watchlistRepository),
@@ -80,6 +86,7 @@ class SearchViewModelTest {
         )
         val watchlistRepository = FakeWatchlistRepositoryForTest()
         val viewModel = SearchViewModel(
+            context,
             SearchInstrumentsUseCase(repository),
             AddToWatchlistUseCase(watchlistRepository),
             IsInWatchlistUseCase(watchlistRepository),
