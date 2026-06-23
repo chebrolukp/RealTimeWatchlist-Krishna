@@ -1,5 +1,6 @@
 package com.doximity.realtimewatchlist_krishna_doximity.ui.theme
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +47,7 @@ private val DarkColorScheme = darkColorScheme(
     outline = Outline,
 )
 
+@SuppressLint("ObsoleteSdkInt")
 @Composable
 fun RealtimeWatchListKrishnaDoximityTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
