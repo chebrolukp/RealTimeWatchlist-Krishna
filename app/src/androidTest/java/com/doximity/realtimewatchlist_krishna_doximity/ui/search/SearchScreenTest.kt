@@ -1,8 +1,11 @@
 package com.doximity.realtimewatchlist_krishna_doximity.ui.search
 
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasStateDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -13,7 +16,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.doximity.realtimewatchlist_krishna_doximity.CompactPhoneTestContent
 import com.doximity.realtimewatchlist_krishna_doximity.ui.preview.PreviewSampleData
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -92,7 +94,9 @@ class SearchScreenTest {
         composeRule.onNodeWithContentDescription("AAPL already in watchlist")
             .assertIsNotEnabled()
         composeRule.onNode(hasStateDescription("Added")).assertIsDisplayed()
-        composeRule.onNode(hasStateDescription("Not added")).assertIsDisplayed()
+        composeRule.onAllNodes(hasStateDescription("Not added")).assertCountEquals(2)
+        composeRule.onNodeWithContentDescription("Add MSFT to watchlist")
+            .assertIsEnabled()
     }
 
     @Test
@@ -130,22 +134,24 @@ class SearchScreenTest {
 
     @Test
     fun searchField_invokesQueryChange() {
-        var query = ""
+        val queryState = mutableStateOf("")
 
         composeRule.setContent {
             CompactPhoneTestContent {
                 SearchContent(
-                    uiState = SearchUiState(query = query),
-                    onQueryChange = { query = it },
+                    uiState = SearchUiState(query = queryState.value),
+                    onQueryChange = { queryState.value = it },
                     onAdd = {},
                 )
             }
         }
 
-        composeRule.onNodeWithText("Search instruments").performTextInput("AAPL")
+        composeRule.onNode(hasSetTextAction())
+            .performClick()
+            .performTextInput("AAPL")
 
         composeRule.runOnIdle {
-            assertTrue(query.contains("AAPL"))
+            assertEquals("AAPL", queryState.value)
         }
     }
 }
